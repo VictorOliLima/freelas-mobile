@@ -1,10 +1,16 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { router} from "expo-router";
+import { useTheme} from "@react-navigation/core";
 
-type UserType = 'FREELANCER' | 'CONTRATANTE';
+type UserRole = 'FREELANCER' | 'CONTRATANTE';
+type ProfileMode = 'OWNER' | 'PUBLIC';
+
 
 export default function Profile() {
-    const [userType, setUserType] = useState<UserType>('FREELANCER');
+    const [role, setRole] = useState<UserRole>('FREELANCER');
+    const profileMode: ProfileMode = 'OWNER';
+
 
     return (
         <View style={styles.container}>
@@ -17,7 +23,7 @@ export default function Profile() {
 
                 <Text style={styles.name}>Victor Lima</Text>
                 <Text style={styles.type}>
-                    {userType === 'FREELANCER' ? 'Freelancer' : 'Contratante'}
+                    {role === 'FREELANCER' ? 'Freelancer' : 'Contratante'}
                 </Text>
 
                 <Text style={styles.bio}>
@@ -39,7 +45,7 @@ export default function Profile() {
             </View>
 
             <View style={styles.stats}>
-                {userType === 'FREELANCER' ? (
+                {role === 'FREELANCER' ? (
                     <>
                         <Stat title="Candidaturas" value="12" />
                         <Stat title="Contratos" value="3" />
@@ -56,10 +62,13 @@ export default function Profile() {
 
             {/* Actions */}
             <View style={styles.actions}>
-                {userType === 'FREELANCER' ? (
+                {role === 'FREELANCER' ? (
                     <>
                         <Action text="Editar Perfil" />
-                        <Action text="Meu Currículo" />
+                        <Action
+                            text="Meu Currículo"
+                            onPress={() => router.push('/resume')}
+                        />
                         <Action text="Minhas Candidaturas" />
                     </>
                 ) : (
@@ -74,13 +83,13 @@ export default function Profile() {
             <TouchableOpacity
                 style={styles.switchButton}
                 onPress={() =>
-                    setUserType(
-                        userType === 'FREELANCER' ? 'CONTRATANTE' : 'FREELANCER'
+                    setRole(
+                        role === 'FREELANCER' ? 'CONTRATANTE' : 'FREELANCER'
                     )
                 }
             >
                 <Text style={styles.switchText}>
-                    Trocar para {userType === 'FREELANCER' ? 'Contratante' : 'Freelancer'}
+                    Trocar para {role === 'FREELANCER' ? 'Contratante' : 'Freelancer'}
                 </Text>
             </TouchableOpacity>
 
@@ -97,9 +106,14 @@ function Stat({ title, value }: { title: string; value: string }) {
     );
 }
 
-function Action({ text }: { text: string }) {
+type ActionProps = {
+    text: string;
+    onPress?: () => void;
+};
+
+function Action({ text, onPress }: ActionProps) {
     return (
-        <TouchableOpacity style={styles.action}>
+        <TouchableOpacity style={styles.action} onPress={onPress}>
             <Text style={styles.actionText}>{text}</Text>
         </TouchableOpacity>
     );
